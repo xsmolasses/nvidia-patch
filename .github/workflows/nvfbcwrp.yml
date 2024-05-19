@@ -25,9 +25,9 @@ jobs:
     - working-directory: "${{github.workspace}}"
       shell: cmd
       run: |
-        REM call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        MSBuild -m -p:"Configuration=${{env.BUILD_CONFIGURATION}};Platform=${{env.BUILD_PLATFORM}}" "${{env.SOLUTION_FILE_PATH}}"
-
+        REM CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        REM MSBuild -m -p:"Configuration=${{env.BUILD_CONFIGURATION}};Platform=${{env.BUILD_PLATFORM}}" "${{env.SOLUTION_FILE_PATH}}"
+        MSBuild -m /p:Configuration="Release" /p:Platform="x64" "${{env.SOLUTION_FILE_PATH}}"
     - uses: actions/upload-artifact@v3
       with:
         path: "${{github.workspace}}"
