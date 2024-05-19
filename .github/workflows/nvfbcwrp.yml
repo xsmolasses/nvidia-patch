@@ -5,7 +5,6 @@ on: workflow_dispatch
 env:
   SOLUTION_FILE_PATH: win\nvfbcwrp\nvfbcwrp.sln
   BUILD_CONFIGURATION: Release
-  BUILD_PLATFORM: x64
 
 permissions:
   contents: read
@@ -15,7 +14,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: microsoft/setup-msbuild@v1.0.2
 
@@ -26,8 +25,16 @@ jobs:
       shell: cmd
       run: |
         REM CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        REM MSBuild -m -p:"Configuration=${{env.BUILD_CONFIGURATION}};Platform=${{env.BUILD_PLATFORM}}" "${{env.SOLUTION_FILE_PATH}}"
-        MSBuild -m /p:Configuration="Release" /p:Platform="x64" "${{env.SOLUTION_FILE_PATH}}"
-    - uses: actions/upload-artifact@v3
+        REM MSBuild -m -p:"Configuration=${{env.BUILD_CONFIGURATION}};Platform=x64" "${{env.SOLUTION_FILE_PATH}}"
+        MSBuild -m /p:Configuration="${{env.BUILD_CONFIGURATION}}" /p:Platform="x64" "${{env.SOLUTION_FILE_PATH}}"
+
+    - working-directory: "${{github.workspace}}"
+      shell: cmd
+      run: |
+        REM CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
+        REM MSBuild -m -p:"Configuration=${{env.BUILD_CONFIGURATION}};Platform=x86" "${{env.SOLUTION_FILE_PATH}}"
+        MSBuild -m /p:Configuration="${{env.BUILD_CONFIGURATION}}" /p:Platform="x86" "${{env.SOLUTION_FILE_PATH}}"
+
+    - uses: actions/upload-artifact@v4
       with:
         path: "${{github.workspace}}"
