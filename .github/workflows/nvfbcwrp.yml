@@ -11,12 +11,12 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v4
 
-    - uses: microsoft/setup-msbuild@v1.0.2
+    - uses: microsoft/setup-msbuild@v2
 
     - working-directory: "${{github.workspace}}"
       run: nuget restore "${{env.SOLUTION_FILE_PATH}}"
@@ -24,16 +24,14 @@ jobs:
     - working-directory: "${{github.workspace}}"
       shell: cmd
       run: |
-        REM CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         REM MSBuild -m -p:"Configuration=${{env.BUILD_CONFIGURATION}};Platform=x64" "${{env.SOLUTION_FILE_PATH}}"
-        MSBuild -m /p:Configuration="${{env.BUILD_CONFIGURATION}}" /p:Platform="x64" "${{env.SOLUTION_FILE_PATH}}"
+        MSBuild -m -p:Configuration="${{env.BUILD_CONFIGURATION}}" -p:Platform="x64" "${{env.SOLUTION_FILE_PATH}}"
 
     - working-directory: "${{github.workspace}}"
       shell: cmd
       run: |
-        REM CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
         REM MSBuild -m -p:"Configuration=${{env.BUILD_CONFIGURATION}};Platform=x86" "${{env.SOLUTION_FILE_PATH}}"
-        MSBuild -m /p:Configuration="${{env.BUILD_CONFIGURATION}}" /p:Platform="x86" "${{env.SOLUTION_FILE_PATH}}"
+        MSBuild -m -p:Configuration="${{env.BUILD_CONFIGURATION}}" -p:Platform="x86" "${{env.SOLUTION_FILE_PATH}}"
 
     - uses: actions/upload-artifact@v4
       with:
